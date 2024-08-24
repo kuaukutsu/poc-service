@@ -37,7 +37,7 @@ si-build:
 	  	cli \
 	  	nginx
 
-si-serve:
+si-serve: si-composer
 	USER=$(UID) docker-compose \
 		-f ./services/info/docker-compose.yml \
 		--profile serve up -d --remove-orphans
@@ -98,7 +98,7 @@ sc-build:
 	  	cli \
 	  	nginx
 
-sc-serve:
+sc-serve: sc-composer
 	USER=$(UID) docker-compose \
 		-f ./services/compliance/docker-compose.yml \
 		--profile serve up -d --remove-orphans
