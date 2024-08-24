@@ -2,7 +2,7 @@
 
 declare(strict_types=1);
 
-namespace kuaukutsu\poc\service;
+namespace kuaukutsu\poc\service\info\main;
 
 use Leaf\App;
 
@@ -13,7 +13,7 @@ $app = new App();
 $app::get('/', static function () use ($app) {
     $app->response()->json(
         [
-            'message' => 'hello world!',
+            'message' => 'Service Info',
         ]
     );
 });

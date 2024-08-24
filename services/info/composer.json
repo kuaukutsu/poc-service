@@ -1,5 +1,5 @@
 {
-  "name": "kuaukutsu/poc-service",
+  "name": "kuaukutsu/poc-service-info",
   "description": "Proof of Concept: example of service topology",
   "type": "template",
   "keywords": [
@@ -33,7 +33,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "kuaukutsu\\poc\\service\\": "src"
+      "kuaukutsu\\poc\\service\\info\\": "src"
     }
   }
 }

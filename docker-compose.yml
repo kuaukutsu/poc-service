@@ -1,12 +1,3 @@
-x-services-volume:
-  &services-volume
-  - type: bind
-    source: ./src
-    target: /src
-  - type: bind
-    source: ./vendor
-    target: /vendor
-
 x-default-logging:
   &default-logging
   driver: local
@@ -14,35 +5,8 @@ x-default-logging:
     max-size: "1m"
     max-file: "3"
 
+name: poc_service
 services:
-  fpm:
-    container_name: poc_service_fpm
-    profiles: [ "serve" ]
-    build:
-      context: .docker/php/fpm
-      target: app_devel
-      args:
-        UID: ${USER:-1}
-        WORKDIR: "/src"
-    networks:
-      - poc-service
-    volumes: *services-volume
-    logging: *default-logging
-
-  cli:
-    container_name: poc_service_cli
-    profiles: [ "cli" ]
-    build:
-      context: .docker/php/cli
-      target: app_devel
-      args:
-        UID: ${USER:-1}
-        WORKDIR: "/src"
-    networks:
-      - poc-service
-    volumes: *services-volume
-    logging: *default-logging
-
   proxy:
     container_name: poc_service_proxy
     profiles: [ "serve" ]
@@ -71,41 +35,22 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
     logging: *default-logging
 
-  nginx:
-    container_name: poc_service_nginx
-    profiles: [ "serve" ]
-    build:
-      context: .docker/proxy/nginx
-    depends_on:
-      - fpm
-      - proxy
-    labels:
-      - "traefik.enable=false"
-      - "traefik.http.routers.fpm.entrypoints=web"
-      - "traefik.http.routers.fpm.rule=Host(`fpm.localhost`)"
-      - "traefik.http.services.fpm.loadbalancer.server.port=80"
-    networks:
-      - poc-service
-    volumes: *services-volume
-    logging: *default-logging
-
   agw:
     container_name: poc_service_agw
     profiles: [ "serve" ]
     build:
       context: .docker/agw/krakend
     depends_on:
-      - nginx
       - proxy
     labels:
       - "traefik.enable=true"
       - "traefik.http.routers.agw.entrypoints=web"
       - "traefik.http.routers.agw.rule=Host(`api.localhost`)"
-      - "traefik.http.services.agw.loadbalancer.server.port=8088"
+      - "traefik.http.services.agw.loadbalancer.server.port=8080"
     networks:
       - poc-service
-    volumes: *services-volume
     logging: *default-logging
 
 networks:
   poc-service:
+    external: true

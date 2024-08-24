@@ -1,0 +1,68 @@
+x-services-volume:
+  &services-volume
+  - type: bind
+    source: ./src
+    target: /src
+  - type: bind
+    source: ./vendor
+    target: /vendor
+
+x-default-logging:
+  &default-logging
+  driver: local
+  options:
+    max-size: "1m"
+    max-file: "3"
+
+name: poc_service_compliance
+services:
+  fpm:
+    container_name: poc_service_compliance_fpm
+    profiles: [ "serve" ]
+    build:
+      context: ../../.docker/php/fpm
+      target: app_devel
+      args:
+        UID: ${USER:-1}
+        WORKDIR: "/src"
+    networks:
+      - local
+    volumes: *services-volume
+    logging: *default-logging
+
+  cli:
+    container_name: poc_service_compliance_cli
+    profiles: [ "cli" ]
+    build:
+      context: ../../.docker/php/cli
+      target: app_devel
+      args:
+        UID: ${USER:-1}
+        WORKDIR: "/src"
+    networks:
+      - local
+    volumes: *services-volume
+    logging: *default-logging
+
+  nginx:
+    container_name: poc_service_compliance_nginx
+    profiles: [ "serve" ]
+    build:
+      context: ../../.docker/proxy/nginx
+    depends_on:
+      - fpm
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.compliance.entrypoints=web"
+      - "traefik.http.routers.compliance.rule=Host(`compliance.localhost`)"
+      - "traefik.http.services.compliance.loadbalancer.server.port=80"
+    networks:
+      - local
+      - poc-service
+    volumes: *services-volume
+    logging: *default-logging
+
+networks:
+  local:
+  poc-service:
+    external: true
