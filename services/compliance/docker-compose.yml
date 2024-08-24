@@ -14,10 +14,10 @@ x-default-logging:
     max-size: "1m"
     max-file: "3"
 
-name: poc_service_info
+name: poc_service_compliance
 services:
   fpm:
-    container_name: poc_service_info_fpm
+    container_name: poc_service_compliance_fpm
     profiles: [ "serve" ]
     build:
       context: ../../.docker/php/fpm
@@ -31,7 +31,7 @@ services:
     logging: *default-logging
 
   cli:
-    container_name: poc_service_info_cli
+    container_name: poc_service_compliance_cli
     profiles: [ "cli" ]
     build:
       context: ../../.docker/php/cli
@@ -45,7 +45,7 @@ services:
     logging: *default-logging
 
   nginx:
-    container_name: poc_service_info_nginx
+    container_name: poc_service_compliance_nginx
     profiles: [ "serve" ]
     build:
       context: ../../.docker/proxy/nginx
@@ -53,9 +53,9 @@ services:
       - fpm
     labels:
       - "traefik.enable=true"
-      - "traefik.http.routers.info.entrypoints=web"
-      - "traefik.http.routers.info.rule=Host(`info.localhost`)"
-      - "traefik.http.services.info.loadbalancer.server.port=80"
+      - "traefik.http.routers.compliance.entrypoints=web"
+      - "traefik.http.routers.compliance.rule=Host(`compliance.localhost`)"
+      - "traefik.http.services.compliance.loadbalancer.server.port=80"
     networks:
       - local
       - poc-service

@@ -25,7 +25,22 @@
           "encoding": "no-op",
           "method": "GET",
           "host": [
-            "http://nginx"
+            "http://poc_service_info_nginx"
+          ]
+        }
+      ]
+    },
+    {
+      "endpoint": "/v1/compliance",
+      "output_encoding": "no-op",
+      "method": "GET",
+      "backend": [
+        {
+          "url_pattern": "/",
+          "encoding": "no-op",
+          "method": "GET",
+          "host": [
+            "http://poc_service_compliance_nginx"
           ]
         }
       ]
