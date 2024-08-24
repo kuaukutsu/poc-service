@@ -49,6 +49,8 @@ services:
       - "traefik.http.services.agw.loadbalancer.server.port=8080"
     networks:
       - poc-service
+    volumes:
+      - .docker/agw/krakend/conf/krakend.json:/etc/krakend/krakend.json
     logging: *default-logging
 
 networks:

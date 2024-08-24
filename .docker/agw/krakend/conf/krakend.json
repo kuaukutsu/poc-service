@@ -3,7 +3,9 @@
   "version": 3,
   "name": "KrakenD - API Gateway",
   "port": 8080,
-  "host": ["http://agw.localhost:8080"],
+  "host": [
+    "http://agw.localhost:8080"
+  ],
   "timeout": "3000ms",
   "cache_ttl": "300s",
   "extra_config": {
@@ -17,16 +19,29 @@
   "endpoints": [
     {
       "endpoint": "/v1/info",
-      "output_encoding": "no-op",
       "method": "GET",
       "backend": [
         {
-          "url_pattern": "/info",
-          "encoding": "no-op",
+          "url_pattern": "/",
+          "encoding": "json",
           "method": "GET",
           "host": [
             "http://poc_service_info_nginx"
-          ]
+          ],
+          "mapping": {
+            "message": "name"
+          }
+        },
+        {
+          "url_pattern": "/info",
+          "encoding": "json",
+          "method": "GET",
+          "host": [
+            "http://poc_service_info_nginx"
+          ],
+          "mapping": {
+            "message": "version"
+          }
         }
       ]
     },
@@ -43,7 +58,16 @@
             "http://poc_service_compliance_nginx"
           ]
         }
-      ]
+      ],
+      "extra_config": {
+        "qos/ratelimit/router": {
+          "@comment":"1 requests every 5 minutes",
+          "client_max_rate": 10,
+          "every": "5m",
+          "key": "User-Agent",
+          "strategy": "header"
+        }
+      }
     }
   ]
 }

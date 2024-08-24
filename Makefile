@@ -8,7 +8,7 @@ rebuild: down _network-remove _image_remove _container_remove _si-remove _sc-rem
 
 serve: app-serve si-serve sc-serve
 
-restart: _si-restart _sc-restart
+restart: _app-restart-agw _si-restart _sc-restart
 
 stop: si-stop sc-stop app-stop
 
@@ -29,6 +29,9 @@ app-stop:
 
 app-down: stop
 	USER=$(UID) docker-compose -f ./docker-compose.yml down --remove-orphans
+
+_app-restart-agw:
+	USER=$(UID) docker-compose -f ./docker-compose.yml --profile serve restart agw
 
 # Services INFO
 si-build:
