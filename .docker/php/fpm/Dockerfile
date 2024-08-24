@@ -1,6 +1,4 @@
-FROM ghcr.io/kuaukutsu/php:8.3-fpm as app_fpm_build
-
-FROM app_fpm_build AS app_setup
+FROM ghcr.io/kuaukutsu/php:8.3-fpm as app_setup
 
 # Arguments
 ARG UID=10001

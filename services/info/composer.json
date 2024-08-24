@@ -33,7 +33,7 @@
   ],
   "autoload": {
     "psr-4": {
-      "kuaukutsu\\poc\\service\\": "src"
+      "kuaukutsu\\poc\\service\\info\\": "src"
     }
   }
 }
