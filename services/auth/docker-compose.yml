@@ -1,0 +1,68 @@
+x-services-volume:
+  &services-volume
+  - type: bind
+    source: ./src
+    target: /src
+  - type: bind
+    source: ./vendor
+    target: /vendor
+
+x-default-logging:
+  &default-logging
+  driver: local
+  options:
+    max-size: "1m"
+    max-file: "3"
+
+name: poc_service_auth
+services:
+  fpm:
+    container_name: poc_service_auth_fpm
+    profiles: [ "serve" ]
+    build:
+      context: ../../.docker/php/fpm
+      target: app_devel
+      args:
+        UID: ${USER:-1}
+        WORKDIR: "/src"
+    networks:
+      - local
+    volumes: *services-volume
+    logging: *default-logging
+
+  cli:
+    container_name: poc_service_auth_cli
+    profiles: [ "cli" ]
+    build:
+      context: ../../.docker/php/cli
+      target: app_devel
+      args:
+        UID: ${USER:-1}
+        WORKDIR: "/src"
+    networks:
+      - local
+    volumes: *services-volume
+    logging: *default-logging
+
+  nginx:
+    container_name: poc_service_auth_nginx
+    profiles: [ "serve" ]
+    build:
+      context: ../../.docker/proxy/nginx
+    depends_on:
+      - fpm
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.auth.entrypoints=web"
+      - "traefik.http.routers.auth.rule=Host(`auth.localhost`)"
+      - "traefik.http.services.auth.loadbalancer.server.port=80"
+    networks:
+      - local
+      - poc-service
+    volumes: *services-volume
+    logging: *default-logging
+
+networks:
+  local:
+  poc-service:
+    external: true
