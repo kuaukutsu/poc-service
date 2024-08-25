@@ -1,0 +1,21 @@
+# composer vendor dir
+/vendor
+/runtime
+/phpqa
+/tmp-phpqa
+
+# code
+.php_cs.cache
+
+# composer itself is not needed
+composer.phar
+
+# phpunit itself is not needed
+phpunit.phar
+# local phpunit config
+/phpunit.xml
+.phpunit.result.cache
+
+# coverage
+coverage.clover
+

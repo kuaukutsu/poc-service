@@ -1,0 +1,39 @@
+{
+  "name": "kuaukutsu/poc-service-auth",
+  "description": "Proof of Concept: example of service topology",
+  "type": "template",
+  "keywords": [
+    "service",
+    "proof of concept"
+  ],
+  "license": "MIT",
+  "authors": [
+    {
+      "name": "Dmitriy Krivopalov",
+      "email": "dimarik82@gmail.com"
+    }
+  ],
+  "support": {
+    "issues": "https://github.com/kuaukutsu/poc-service/issues",
+    "source": "https://github.com/kuaukutsu/poc-service"
+  },
+  "require": {
+    "php": ">=8.3",
+    "php-di/php-di": "^7.0",
+    "leafs/leaf": "^3.5"
+  },
+  "require-dev": {
+    "roave/security-advisories": "dev-latest"
+  },
+  "repositories": [
+    {
+      "type": "composer",
+      "url": "https://asset-packagist.org"
+    }
+  ],
+  "autoload": {
+    "psr-4": {
+      "kuaukutsu\\poc\\service\\auth\\": "src"
+    }
+  }
+}

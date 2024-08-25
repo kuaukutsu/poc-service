@@ -2,17 +2,17 @@ UID = $$(id -u)
 
 # Main
 
-build: _network-create app-build si-build sc-build
+build: _network-create app-build si-build sc-build sa-build
 
-rebuild: down _network-remove _image_remove _container_remove _si-remove _sc-remove build
+rebuild: down _network-remove _image_remove _container_remove _si-remove _sc-remove _sa-remove build
 
-serve: app-serve si-serve sc-serve
+serve: app-serve si-serve sc-serve sa-serve
 
-restart: _app-restart-agw _si-restart _sc-restart
+restart: _app-restart-agw _si-restart _sc-restart _sa-restart
 
-stop: si-stop sc-stop app-stop
+stop: si-stop sc-stop sa-stop app-stop
 
-down: si-down sc-down app-down
+down: si-down sc-down sa-down app-down
 
 # Application
 
@@ -154,6 +154,67 @@ _sc_container_remove:
 		poc_service_compliance_fpm \
 		poc_service_compliance_cli \
 		poc_service_compliance_nginx
+
+# Services Auth
+sa-build:
+	USER=$(UID) docker-compose -f ./services/auth/docker-compose.yml build \
+	  	fpm \
+	  	cli \
+	  	nginx
+
+sa-serve: sa-composer
+	USER=$(UID) docker-compose \
+		-f ./services/auth/docker-compose.yml \
+		--profile serve up -d --remove-orphans
+
+sa-stop:
+	USER=$(UID) docker-compose \
+		-f ./services/auth/docker-compose.yml \
+		--profile serve stop
+
+sa-down: sa-stop
+	USER=$(UID) docker-compose \
+		-f ./services/auth/docker-compose.yml \
+		down --remove-orphans
+
+sa-cli:
+	USER=$(UID) docker-compose \
+		-f ./services/auth/docker-compose.yml \
+		run --rm -u $(UID) -w /src cli sh
+
+sa-composer:
+	docker run --init -it --rm -u $(UID) -v "$$(pwd)/services/auth:/src" -w /src \
+		composer:latest \
+		composer install
+
+sa-composer-up:
+	docker run --init -it --rm -u $(UID) -v "$$(pwd)/services/auth:/src" -w /src \
+		composer:latest \
+		composer update --no-cache
+
+_sa-restart: _sa-restart-fpm _sa-restart-nginx
+
+_sa-restart-fpm:
+	USER=$(UID) docker-compose -f ./services/auth/docker-compose.yml \
+		--profile serve restart fpm
+
+_sa-restart-nginx:
+	USER=$(UID) docker-compose -f ./services/auth/docker-compose.yml \
+		--profile serve restart nginx
+
+_sa-remove: _sa_image_remove _sa_container_remove
+
+_sa_image_remove:
+	docker image rm -f \
+		poc_service_auth-fpm \
+		poc_service_auth-cli \
+		poc_service_auth-nginx
+
+_sa_container_remove:
+	docker rm -f \
+		poc_service_auth_fpm \
+		poc_service_auth_cli \
+		poc_service_auth_nginx
 
 # Dependencies
 
