@@ -40,3 +40,14 @@ Client rate-limiting
 https://www.krakend.io/docs/endpoints/rate-limit/#client-rate-limiting-client_max_rate
 
 `GET /v1/compliance`
+
+Authentication & Authorization
+
+`GET /v1/compliance/protected` 401 Unauthorized
+
+Login
+
+`GET /v1/login` get **access_token**
+
+`GET /v1/compliance/protected` Authorization Bearer **access_token**
+

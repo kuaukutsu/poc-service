@@ -97,7 +97,8 @@
       }
     },
     {
-      "endpoint": "/v1/compliance-protected",
+      "endpoint": "/v1/compliance/{controller}",
+      "output_encoding": "no-op",
       "method": "GET",
       "input_headers": [
         "X-User"
@@ -124,7 +125,8 @@
       },
       "backend": [
         {
-          "url_pattern": "/",
+          "url_pattern": "/{controller}",
+          "encoding": "no-op",
           "method": "GET",
           "host": [
             "http://poc_service_compliance_nginx"
