@@ -1,5 +1,7 @@
 # Service topology [WIP]
 
+<img width="1204" alt="miro schema" src="https://github.com/user-attachments/assets/1ec6cf2b-70dd-4e48-b027-b5f103afbacf">
+
 API Gateway
 
 `.docker/agw/krakend/conf/krakend.json`
