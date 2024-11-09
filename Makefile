@@ -34,7 +34,12 @@ _app-restart-agw:
 	USER=$(UID) docker-compose -f ./docker-compose.yml --profile serve restart agw
 
 _app-restart-metrics:
-	USER=$(UID) docker-compose -f ./docker-compose.yml --profile serve restart victoriametrics vmagent grafana
+	USER=$(UID) docker-compose -f ./docker-compose.yml --profile serve restart \
+		victoriametrics \
+		victorialogs \
+		fluentbit \
+		vmagent \
+		grafana
 
 # Services INFO
 si-build:
