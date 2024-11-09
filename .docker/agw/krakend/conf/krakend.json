@@ -2,19 +2,41 @@
   "$schema": "https://www.krakend.io/schema/krakend.json",
   "version": 3,
   "name": "KrakenD - API Gateway",
-  "port": 8080,
-  "host": [
-    "http://agw.localhost:8080"
-  ],
   "timeout": "3000ms",
   "cache_ttl": "300s",
   "extra_config": {
+    "router": {
+      "@comment": "The health endpoint",
+      "health_path": "/health"
+    },
     "telemetry/logging": {
       "level": "INFO",
       "prefix": "[KRAKEND]",
       "syslog": false,
       "stdout": true
+    },
+    "telemetry/metrics": {
+      "collection_time": "60s",
+      "listen_address": ":8090"
+    },
+    "telemetry/opentelemetry": {
+      "service_name": "krakend_prometheus_service",
+      "trace_sample_rate": 0.25,
+      "metric_reporting_period": 1,
+      "exporters": {
+        "prometheus": [
+          {
+            "name": "prometheus_exporter",
+            "port": 9090,
+            "process_metrics": true,
+            "go_metrics": true
+          }
+        ]
+      }
     }
+  },
+  "router": {
+    "disable_gzip": true
   },
   "endpoints": [
     {

@@ -21,6 +21,12 @@ services:
       - "--entrypoints.web.address=:80"
       - "--entrypoints.websecure.address=:443"
       - "--log.level=DEBUG"
+      - "--metrics.prometheus=true"
+      - "--metrics.prometheus.buckets=0.100000, 0.300000, 1.200000, 5.000000"
+      - "--metrics.prometheus.addEntryPointsLabels=true"
+      - "--metrics.prometheus.addServicesLabels=true"
+      - "--entryPoints.metrics.address=:8899"
+      - "--metrics.prometheus.entryPoint=metrics"
     ports:
       - "80:80"
       - "443:443"
@@ -52,6 +58,76 @@ services:
     volumes:
       - .docker/agw/krakend/conf/krakend.json:/etc/krakend/krakend.json
     logging: *default-logging
+
+  victoriametrics:
+    container_name: poc_victoriametrics
+    profiles: [ "serve" ]
+    build:
+      context: .docker/metrics/victoriametrics
+    depends_on:
+      - proxy
+    volumes:
+      - vmdata:/storage
+    command:
+      - "--storageDataPath=/storage"
+      - "--httpListenAddr=:8428"
+    networks:
+      - poc-service
+    logging: *default-logging
+
+  vmagent:
+    container_name: poc_vmagent
+    profiles: [ "serve" ]
+    build:
+      context: .docker/metrics/victoriametrics/vmagent
+    depends_on:
+      - victoriametrics
+    volumes:
+      - vmagentdata:/vmagentdata
+      - .docker/metrics/victoriametrics/vmagent/prometheus.yml:/etc/prometheus/prometheus.yml
+    command:
+      - "--promscrape.config=/etc/prometheus/prometheus.yml"
+      - "--remoteWrite.url=http://poc_victoriametrics:8428/api/v1/write"
+    networks:
+      - poc-service
+    logging: *default-logging
+
+  grafana:
+    container_name: poc_grafana
+    profiles: [ "serve" ]
+    build:
+      context: .docker/metrics/grafana
+    depends_on:
+      - victoriametrics
+    labels:
+      - "traefik.enable=true"
+      - "traefik.http.routers.grafana.entrypoints=web"
+      - "traefik.http.routers.grafana.rule=Host(`grafana.localhost`)"
+      - "traefik.http.services.grafana.loadbalancer.server.port=3000"
+    environment:
+      - "GF_INSTALL_PLUGINS=https://github.com/VictoriaMetrics/victorialogs-datasource/releases/download/v0.6.2/victorialogs-datasource-v0.6.2.zip;victorialogs-datasource"
+      - "GF_PLUGINS_ALLOW_LOADING_UNSIGNED_PLUGINS=victorialogs-datasource"
+    volumes:
+      - grafanadata:/var/lib/grafana
+      - .docker/metrics/grafana/provisioning:/etc/grafana/provisioning
+      - .docker/metrics/grafana/dashboards/victoriametrics.json:/var/lib/grafana/dashboards/vm.json
+      - .docker/metrics/grafana/dashboards/victorialogs.json:/var/lib/grafana/dashboards/vl.json
+      - .docker/metrics/grafana/dashboards/traefik.json:/var/lib/grafana/dashboards/proxy.json
+      - .docker/metrics/grafana/dashboards/krakend.json:/var/lib/grafana/dashboards/agw.json
+    networks:
+      - poc-service
+    healthcheck:
+      test: [ "CMD", "curl", "-f", "http://localhost:3000/api/health" ]
+      interval: 30s
+      timeout: 10s
+      retries: 2
+      start_period: 15s
+    logging: *default-logging
+
+volumes:
+  vmdata: {}
+  vmagentdata: {}
+  grafanadata: {}
 
 networks:
   poc-service:
