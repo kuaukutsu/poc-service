@@ -8,7 +8,7 @@ rebuild: down _network-remove _image_remove _container_remove _si-remove _sc-rem
 
 serve: app-serve si-serve sc-serve sa-serve
 
-restart: _app-restart-agw _si-restart _sc-restart _sa-restart
+restart: _app-restart-agw _si-restart _sc-restart _sa-restart _app-restart-metrics
 
 stop: si-stop sc-stop sa-stop app-stop
 
@@ -17,7 +17,7 @@ down: si-down sc-down sa-down app-down
 # Application
 
 app-build:
- 	USER=$(UID) docker-compose -f ./docker-compose.yml build \
+	USER=$(UID) docker-compose -f ./docker-compose.yml build \
  	  	proxy \
  	  	agw
 
@@ -32,6 +32,9 @@ app-down: stop
 
 _app-restart-agw:
 	USER=$(UID) docker-compose -f ./docker-compose.yml --profile serve restart agw
+
+_app-restart-metrics:
+	USER=$(UID) docker-compose -f ./docker-compose.yml --profile serve restart victoriametrics vmagent grafana
 
 # Services INFO
 si-build:

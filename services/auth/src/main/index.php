@@ -29,7 +29,7 @@ $app::get('/', static function () use ($app) {
 
 $app::post('/login', static function () use ($app) {
     $exp = strtotime('+1 hour');
-    $params = $app->request()->params();
+    $params = $app->request()->postData();
     if (isset($params['username'], $params['password']) === false) {
         throw new LogicException("username and password are required.");
     }
