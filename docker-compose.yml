@@ -1,7 +1,7 @@
 name: poc_service
 services:
   proxy:
-    container_name: poc_service_proxy
+    container_name: poc_proxy
     profiles: [ "serve" ]
     build:
       context: .docker/proxy/traefik
@@ -34,7 +34,7 @@ services:
       - /var/run/docker.sock:/var/run/docker.sock
 
   agw:
-    container_name: poc_service_agw
+    container_name: poc_agw
     profiles: [ "serve" ]
     build:
       context: .docker/agw/krakend

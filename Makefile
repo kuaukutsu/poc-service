@@ -6,6 +6,8 @@ build: _network-create app-build si-build sc-build sa-build
 
 rebuild: down _network-remove _image_remove _container_remove _si-remove _sc-remove _sa-remove build
 
+remove: _image_remove _container_remove
+
 serve: app-serve si-serve sc-serve sa-serve
 
 restart: _app-restart-agw _si-restart _sc-restart _sa-restart _app-restart-metrics
@@ -236,4 +238,4 @@ _image_remove:
 	docker image rm -f poc_service-agw poc_service-proxy
 
 _container_remove:
-	docker rm -f poc_service_agw poc_service_proxy
+	docker rm -f poc_agw poc_proxy

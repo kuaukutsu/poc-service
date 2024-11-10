@@ -53,3 +53,6 @@ Login
 
 `GET /v1/compliance/protected` Authorization Bearer **access_token**
 
+## Metrics / Telemetry
+
+http://grafana.localhost/
