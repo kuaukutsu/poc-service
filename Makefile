@@ -6,6 +6,8 @@ build: _network-create app-build si-build sc-build sa-build
 
 rebuild: down _network-remove _image_remove _container_remove _si-remove _sc-remove _sa-remove build
 
+service-rebuild: _si-remove _sc-remove _sa-remove si-build sc-build sa-build
+
 remove: _image_remove _container_remove
 
 serve: app-serve si-serve sc-serve sa-serve

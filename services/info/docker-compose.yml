@@ -9,9 +9,9 @@ x-services-volume:
 
 x-default-logging:
   &default-logging
-  driver: local
+  driver: json-file
   options:
-    max-size: "1m"
+    max-size: "5m"
     max-file: "3"
 
 name: poc_service_info
