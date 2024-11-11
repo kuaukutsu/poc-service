@@ -247,5 +247,8 @@ _network-remove:
 _image_remove:
 	docker image rm -f poc_service-agw poc_service-proxy
 
+_volume_remove:
+	docker volume rm -f vmdata vldata vmagentdata grafanadata
+
 _container_remove:
 	docker rm -f poc_agw poc_proxy
