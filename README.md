@@ -56,3 +56,10 @@ Login
 ## Metrics / Telemetry
 
 http://grafana.localhost/
+
+## Read
+
+Микросервисы на пальцах: API‑Gateway, API‑Composition, KrakenD, FastAPI  
+https://habr.com/ru/companies/selectel/articles/881022/
+
+
